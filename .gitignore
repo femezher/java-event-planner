@@ -1,0 +1,24 @@
+# ===== Compilados Java =====
+build/
+out/
+bin/
+*.class
+
+# ===== Sistema operacional =====
+.DS_Store
+Thumbs.db
+
+# ===== IDEs =====
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# ===== Diversos =====
+*.log
+
+# ===== Materiais de curso e PDFs gerados (nao versionar) =====
+Aulas do Curso/
+*.pdf
