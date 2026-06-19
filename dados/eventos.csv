@@ -1,0 +1,9 @@
+# Arquivo de dados do Java Event Planner (gerado/manipulado automaticamente).
+# Linhas iniciadas por '#' sao comentarios e sao ignoradas na leitura.
+# Formato: titulo,data,hora,local,categoria,antecedencia,descricao,participantes
+# categoria = REUNIAO | ANIVERSARIO | COMPROMISSO
+# antecedencia = UM_DIA | TRES_DIAS | UMA_SEMANA
+# participantes = nome:email;nome:email;...
+Reuniao de TCC,2026-06-21,14:30,Sala 3-001,REUNIAO,UM_DIA,Revisar o capitulo 2 do relatorio,Ana:ana@usp.br;Beto:beto@usp.br
+Aniversario da Maria,2026-06-22,09:00,Casa,ANIVERSARIO,TRES_DIAS,Levar bolo de chocolate,
+Consulta medica,2026-06-25,16:00,Clinica Central,COMPROMISSO,UM_DIA,Levar exames recentes,Carlos:carlos@usp.br
