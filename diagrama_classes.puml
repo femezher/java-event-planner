@@ -1,0 +1,142 @@
+@startuml Java_Event_Planner
+' =====================================================================
+' Diagrama de Classes - Java Event Planner (SCC0504 - Versao Compacta)
+' Renderize em https://www.plantsuml.com ou na extensao PlantUML do VSCode.
+' Para exportar PNG:  java -jar plantuml.jar diagrama_classes.puml
+' =====================================================================
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+title Java Event Planner — Diagrama de Classes
+
+' --------------------- MODELO (estado / dados) ---------------------
+package "modelo" {
+  enum Categoria {
+    REUNIAO
+    ANIVERSARIO
+    COMPROMISSO
+    --
+    -rotulo : String
+    -cor : Color
+    +getRotulo() : String
+    +getCor() : Color
+  }
+  enum Antecedencia {
+    UM_DIA
+    TRES_DIAS
+    UMA_SEMANA
+    --
+    -duracao : Duration
+    +getDuracao() : Duration
+  }
+  class Participante {
+    -nome : String
+    -email : String
+    +getNome() : String
+    +getEmail() : String
+    +toString() : String
+  }
+  class Evento {
+    -titulo : String
+    -data : LocalDate
+    -hora : LocalTime
+    -local : String
+    -descricao : String
+    +getInstanteLembrete() : LocalDateTime
+    +addParticipante(p : Participante)
+    +toString() : String
+  }
+}
+
+' --------------------- EXCECAO (validacao) ---------------------
+package "excecao" {
+  class ValidacaoException
+  class TituloVazioException
+  class DataInvalidaException
+  class HoraInvalidaException
+  class EmailInvalidoException
+}
+
+' --------------------- PERSISTENCIA ---------------------
+package "persistencia" {
+  interface RepositorioEventos {
+    +salvar(eventos : Vector<Evento>)
+    +carregar() : Vector<Evento>
+  }
+  class RepositorioEventosCSV {
+    -arquivo : File
+    +salvar(...)
+    +carregar() : Vector<Evento>
+  }
+}
+
+' --------------------- SERVICO (controle / MVC) ---------------------
+package "servico" {
+  class GerenciadorEventos {
+    -eventos : Vector<Evento>
+    +adicionar(e : Evento)
+    +editar(antigo, novo : Evento)
+    +remover(e : Evento)
+    +buscarPorTexto(termo : String) : Vector<Evento>
+    +eventosDoDia(dia : LocalDate) : Vector<Evento>
+    +lembretesProximos() : Vector<Evento>
+    +salvar()
+  }
+}
+
+' --------------------- GUI (Swing / view) ---------------------
+package "gui" {
+  class JanelaPrincipal
+  class PainelCalendario
+  class PainelEventosDia
+  class DialogoEvento
+  class IntField
+}
+
+' Classes externas do Java (apenas para mostrar a heranca de Swing)
+class JFrame <<Swing>>
+class JPanel <<Swing>>
+class JDialog <<Swing>>
+class JTextField <<Swing>>
+class Exception <<java.lang>>
+
+' ===================== RELACIONAMENTOS =====================
+
+' Composicao e associacao no modelo
+Evento "1" *-- "0..*" Participante : participantes
+Evento --> Categoria
+Evento --> Antecedencia
+
+' Heranca das excecoes
+Exception <|-- ValidacaoException
+ValidacaoException <|-- TituloVazioException
+ValidacaoException <|-- DataInvalidaException
+ValidacaoException <|-- HoraInvalidaException
+ValidacaoException <|-- EmailInvalidoException
+
+' Interface de persistencia (realizacao)
+RepositorioEventos <|.. RepositorioEventosCSV
+
+' Servico
+GerenciadorEventos --> RepositorioEventos : usa
+GerenciadorEventos o-- "0..*" Evento : eventos
+GerenciadorEventos ..> ValidacaoException : lança
+
+' Heranca de componentes Swing
+JFrame <|-- JanelaPrincipal
+JPanel <|-- PainelCalendario
+JPanel <|-- PainelEventosDia
+JDialog <|-- DialogoEvento
+JTextField <|-- IntField
+
+' Composicao/uso na GUI
+JanelaPrincipal *-- PainelCalendario
+JanelaPrincipal *-- PainelEventosDia
+JanelaPrincipal --> GerenciadorEventos
+PainelCalendario --> GerenciadorEventos
+PainelEventosDia --> GerenciadorEventos
+PainelEventosDia ..> DialogoEvento : abre
+DialogoEvento ..> Evento : cria
+DialogoEvento *-- IntField
+
+@enduml

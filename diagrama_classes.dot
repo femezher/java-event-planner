@@ -1,0 +1,197 @@
+// =====================================================================
+// Java Event Planner — Diagrama de Classes (SCC0504, versao Compacta)
+// Notacao UML no formato das aulas: caixa de 3 compartimentos
+// (nome / atributos / metodos), + publico, - privado,
+// tipo apos os dois-pontos; heranca = triangulo vazado;
+// realizacao (implements) = triangulo vazado tracejado;
+// composicao = losango cheio; agregacao = losango vazado;
+// associacao/uso = seta aberta.
+//
+// Render:  dot -Tpng diagrama_classes.dot -o diagrama_classes.png
+//          dot -Tsvg diagrama_classes.dot -o diagrama_classes.svg
+// =====================================================================
+digraph EventPlanner {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=22, labelloc=t,
+         label="Java Event Planner — Diagrama de Classes (SCC0504)", nodesep=0.45, ranksep=0.75];
+  node  [shape=plaintext, fontname="Helvetica", fontsize=10];
+  edge  [fontname="Helvetica", fontsize=9];
+
+  // ----------------------------------------------------------------
+  // Bibliotecas do Java (apenas para mostrar a heranca de Swing)
+  // ----------------------------------------------------------------
+  subgraph cluster_lib {
+    label="java.lang / javax.swing (bibliotecas)"; style="rounded,dashed"; color="gray60"; fontsize=12;
+    JFrame     [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="3"><TR><TD><I>«Swing»</I><BR/><B>JFrame</B></TD></TR></TABLE>>];
+    JPanel     [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="3"><TR><TD><I>«Swing»</I><BR/><B>JPanel</B></TD></TR></TABLE>>];
+    JDialog    [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="3"><TR><TD><I>«Swing»</I><BR/><B>JDialog</B></TD></TR></TABLE>>];
+    JTextField [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="3"><TR><TD><I>«Swing»</I><BR/><B>JTextField</B></TD></TR></TABLE>>];
+    Exception  [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="3"><TR><TD><I>«java.lang»</I><BR/><B>Exception</B></TD></TR></TABLE>>];
+  }
+
+  // ----------------------------------------------------------------
+  // Pacote modelo
+  // ----------------------------------------------------------------
+  subgraph cluster_modelo {
+    label="modelo"; style="rounded"; color="#3367d6"; fontsize=13;
+
+    Evento [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>Evento</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">- titulo : String<BR/>- data : LocalDate<BR/>- hora : LocalTime<BR/>- local : String<BR/>- descricao : String<BR/>- participantes : Vector&lt;Participante&gt;</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getInstanteLembrete() : LocalDateTime<BR/>+ addParticipante(p : Participante) : void<BR/>+ get/set...()<BR/>+ toString() : String</TD></TR>
+      </TABLE>>];
+
+    Participante [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>Participante</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">- nome : String<BR/>- email : String</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getNome() : String<BR/>+ getEmail() : String<BR/>+ toString() : String</TD></TR>
+      </TABLE>>];
+
+    Categoria [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><I>«enumeration»</I><BR/><B>Categoria</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">REUNIAO<BR/>ANIVERSARIO<BR/>COMPROMISSO</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getRotulo() : String<BR/>+ getCor() : Color</TD></TR>
+      </TABLE>>];
+
+    Antecedencia [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><I>«enumeration»</I><BR/><B>Antecedencia</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">UM_DIA<BR/>TRES_DIAS<BR/>UMA_SEMANA</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getDuracao() : Duration</TD></TR>
+      </TABLE>>];
+  }
+
+  // ----------------------------------------------------------------
+  // Pacote excecao
+  // ----------------------------------------------------------------
+  subgraph cluster_excecao {
+    label="excecao"; style="rounded"; color="#d93025"; fontsize=13;
+
+    ValidacaoException [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>ValidacaoException</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ ValidacaoException(msg : String)</TD></TR>
+      </TABLE>>];
+    TituloVazioException   [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD><B>TituloVazioException</B></TD></TR></TABLE>>];
+    DataInvalidaException  [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD><B>DataInvalidaException</B></TD></TR></TABLE>>];
+    HoraInvalidaException  [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD><B>HoraInvalidaException</B></TD></TR></TABLE>>];
+    EmailInvalidoException [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD><B>EmailInvalidoException</B></TD></TR></TABLE>>];
+  }
+
+  // ----------------------------------------------------------------
+  // Pacote persistencia
+  // ----------------------------------------------------------------
+  subgraph cluster_persistencia {
+    label="persistencia"; style="rounded"; color="#188038"; fontsize=13;
+
+    RepositorioEventos [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><I>«interface»</I><BR/><B>RepositorioEventos</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ salvar(eventos : Vector&lt;Evento&gt;) : void<BR/>+ carregar() : Vector&lt;Evento&gt;</TD></TR>
+      </TABLE>>];
+
+    RepositorioEventosCSV [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>RepositorioEventosCSV</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">- arquivo : File</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ salvar(eventos : Vector&lt;Evento&gt;) : void<BR/>+ carregar() : Vector&lt;Evento&gt;</TD></TR>
+      </TABLE>>];
+  }
+
+  // ----------------------------------------------------------------
+  // Pacote servico
+  // ----------------------------------------------------------------
+  subgraph cluster_servico {
+    label="servico"; style="rounded"; color="#9334e6"; fontsize=13;
+
+    GerenciadorEventos [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>GerenciadorEventos</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">- eventos : Vector&lt;Evento&gt;<BR/>- repositorio : RepositorioEventos</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ adicionar(e : Evento) : void<BR/>+ editar(antigo, novo : Evento) : void<BR/>+ remover(e : Evento) : void<BR/>+ buscarPorTexto(t : String) : Vector&lt;Evento&gt;<BR/>+ eventosDoDia(d : LocalDate) : Vector&lt;Evento&gt;<BR/>+ lembretesProximos() : Vector&lt;Evento&gt;<BR/>+ salvar() : void</TD></TR>
+      </TABLE>>];
+  }
+
+  // ----------------------------------------------------------------
+  // Pacote gui
+  // ----------------------------------------------------------------
+  subgraph cluster_gui {
+    label="gui"; style="rounded"; color="#e37400"; fontsize=13;
+
+    JanelaPrincipal [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>JanelaPrincipal</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ diaSelecionado(dia : LocalDate) : void<BR/>+ aoAlterarEventos() : void</TD></TR>
+      </TABLE>>];
+    PainelCalendario [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>PainelCalendario</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">- mesAtual : YearMonth</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ atualizar() : void</TD></TR>
+      </TABLE>>];
+    PainelEventosDia [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>PainelEventosDia</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">- diaAtual : LocalDate</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ mostrarDia(dia : LocalDate) : void<BR/>+ mostrarResultados(...) : void</TD></TR>
+      </TABLE>>];
+    DialogoEvento [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>DialogoEvento</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getEventoResultado() : Evento</TD></TR>
+      </TABLE>>];
+    IntField [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>IntField</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getInt() : int</TD></TR>
+      </TABLE>>];
+  }
+
+  // ================================================================
+  // RELACIONAMENTOS
+  // ================================================================
+
+  // ---- Heranca (triangulo vazado): subclasse --|> superclasse ----
+  edge [dir=back, arrowtail=empty, style=solid, color="black"];
+  JFrame     -> JanelaPrincipal;
+  JPanel     -> PainelCalendario;
+  JPanel     -> PainelEventosDia;
+  JDialog    -> DialogoEvento;
+  JTextField -> IntField;
+  Exception          -> ValidacaoException;
+  ValidacaoException -> TituloVazioException;
+  ValidacaoException -> DataInvalidaException;
+  ValidacaoException -> HoraInvalidaException;
+  ValidacaoException -> EmailInvalidoException;
+
+  // ---- Realizacao / implements (triangulo vazado tracejado) ----
+  edge [dir=back, arrowtail=empty, style=dashed, color="black"];
+  RepositorioEventos -> RepositorioEventosCSV;
+
+  // ---- Composicao (losango cheio no "todo") ----
+  edge [dir=back, arrowtail=diamond, style=solid, color="black"];
+  Evento          -> Participante      [headlabel="0..*"];
+  JanelaPrincipal -> PainelCalendario;
+  JanelaPrincipal -> PainelEventosDia;
+  DialogoEvento   -> IntField;
+
+  // ---- Agregacao (losango vazado): Gerenciador o-- Evento ----
+  edge [dir=back, arrowtail=odiamond, style=solid, color="black"];
+  GerenciadorEventos -> Evento [headlabel="0..*"];
+
+  // ---- Associacao / uso (seta aberta) ----
+  edge [dir=forward, arrowhead=vee, arrowtail=none, style=solid, color="#444444"];
+  Evento             -> Categoria;
+  Evento             -> Antecedencia;
+  GerenciadorEventos -> RepositorioEventos [label="usa"];
+  JanelaPrincipal    -> GerenciadorEventos [label="usa"];
+  PainelCalendario   -> GerenciadorEventos [label="usa"];
+  PainelEventosDia   -> GerenciadorEventos [label="usa"];
+
+  // ---- Dependencia (tracejada): cria / abre ----
+  edge [dir=forward, arrowhead=vee, style=dashed, color="#444444"];
+  PainelEventosDia -> DialogoEvento [label="abre"];
+  DialogoEvento    -> Evento        [label="cria"];
+}
