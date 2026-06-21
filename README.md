@@ -4,7 +4,6 @@ Aplicação desktop em **Java + Swing** para gerenciar eventos num **calendário
 mensal**, com lista diária, busca, lembretes na inicialização, persistência em
 arquivo e validação de entradas. Versão **Compacta (SCC0504)**.
 
-> Plano completo, justificativa de POO e decisões de design: ver **`PLANO_DO_PROJETO.md`**.
 > Diagrama de classes: ver **`diagrama_classes.puml`**.
 
 ---
@@ -48,7 +47,7 @@ dados/eventos.csv  arquivo de dados de exemplo
 ```
 
 Arquitetura em camadas no estilo **MVC** (Cap. 13): a GUI fala com o `servico`,
-que fala com a `persistencia`. Detalhes no `PLANO_DO_PROJETO.md`.
+que fala com a `persistencia`.
 
 ---
 
