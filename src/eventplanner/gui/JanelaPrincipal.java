@@ -20,6 +20,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
 /**
@@ -30,8 +31,10 @@ import javax.swing.JTextField;
  *  - PainelCalendario.OuvinteDeDia  -> reage ao clique num dia do calendario;
  *  - PainelEventosDia.Atualizavel   -> reage a mudancas nos eventos.
  *
- * Layout (BorderLayout - Cap. 13): calendario no CENTRO, agenda do dia a LESTE,
- * barra de busca ao NORTE e um menu "Arquivo" no topo.
+ * Layout: barra de busca ao NORTE e, no CENTRO, TRES COLUNAS redimensionaveis
+ * (JSplitPane - Cap. 13 "Split Panes"):
+ *   1) calendario mensal;  2) lista de eventos do dia;  3) linha do tempo
+ *   (estilo Outlook, com alternancia Dia/Semana).
  */
 public class JanelaPrincipal extends JFrame
         implements PainelCalendario.OuvinteDeDia, PainelEventosDia.Atualizavel {
@@ -39,7 +42,9 @@ public class JanelaPrincipal extends JFrame
     private final GerenciadorEventos gerenciador;
     private final PainelCalendario painelCalendario;
     private final PainelEventosDia painelDia;
+    private final PainelAgenda painelAgenda;             // 3a coluna: linha do tempo
     private final JTextField campoBusca = new JTextField(16);
+    private LocalDate diaSelecionado = LocalDate.now();  // dia atualmente em foco
 
     public JanelaPrincipal(GerenciadorEventos gerenciador) {
         super("Java Event Planner - Agenda (SCC0504)");
@@ -57,12 +62,24 @@ public class JanelaPrincipal extends JFrame
         barraBusca.add(botaoLimpar);
         add(barraBusca, BorderLayout.NORTH);
 
-        // ---------- CENTRO/LESTE: calendario + agenda do dia ----------
+        // ---------- CENTRO: tres colunas (calendario | dia | linha do tempo) ----------
         // 'this' e passado como ouvinte: a propria janela trata os eventos.
         painelCalendario = new PainelCalendario(gerenciador, this);
         painelDia = new PainelEventosDia(gerenciador, this, this);
-        add(painelCalendario, BorderLayout.CENTER);
-        add(painelDia, BorderLayout.EAST);
+        // A linha do tempo avisa 'atualizarTudo' quando cria/edita um evento.
+        painelAgenda = new PainelAgenda(this, gerenciador, diaSelecionado, new Runnable() {
+            @Override public void run() { atualizarTudo(); }
+        });
+
+        // Coluna 2 (dia) + coluna 3 (linha do tempo) num split aninhado.
+        JSplitPane splitDireito = new JSplitPane(
+                JSplitPane.HORIZONTAL_SPLIT, painelDia, painelAgenda);
+        splitDireito.setContinuousLayout(true);
+        // Coluna 1 (calendario) + as duas a direita.
+        JSplitPane splitPrincipal = new JSplitPane(
+                JSplitPane.HORIZONTAL_SPLIT, painelCalendario, splitDireito);
+        splitPrincipal.setContinuousLayout(true);
+        add(splitPrincipal, BorderLayout.CENTER);
 
         // ---------- Menu Arquivo (Cap. 13 "Menus") ----------
         construirMenu();
@@ -116,7 +133,16 @@ public class JanelaPrincipal extends JFrame
         menuArquivo.addSeparator();
         menuArquivo.add(itemSair);
         barra.add(menuArquivo);
+
         setJMenuBar(barra);
+    }
+
+    /** Atualiza as tres colunas e salva (apos criar/editar/excluir em qualquer painel). */
+    private void atualizarTudo() {
+        painelCalendario.atualizar(); // re-pinta os destaques do mes
+        painelDia.recarregar();       // recarrega a lista do dia
+        painelAgenda.recarregar();    // re-desenha a linha do tempo
+        salvarComTratamento();        // persiste imediatamente
     }
 
     private void buscar() {
@@ -139,16 +165,20 @@ public class JanelaPrincipal extends JFrame
 
     // ===================== implementacao das interfaces =====================
 
-    /** Chamado pelo PainelCalendario quando um dia e clicado. */
+    /**
+     * Chamado pelo PainelCalendario ao selecionar um dia (clique simples ou
+     * duplo): foca o dia na lista lateral E na linha do tempo (3a coluna).
+     */
     @Override
     public void diaSelecionado(LocalDate dia) {
+        this.diaSelecionado = dia;
         painelDia.mostrarDia(dia);
+        painelAgenda.mostrarDia(dia);
     }
 
     /** Chamado pelo PainelEventosDia quando eventos sao criados/editados/excluidos. */
     @Override
     public void aoAlterarEventos() {
-        painelCalendario.atualizar(); // re-pinta os destaques do mes
-        salvarComTratamento();        // persiste imediatamente
+        atualizarTudo();
     }
 }

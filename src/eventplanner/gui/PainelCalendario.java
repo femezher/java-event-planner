@@ -1,5 +1,6 @@
 package eventplanner.gui;
 
+import eventplanner.modelo.Categoria;
 import eventplanner.modelo.Evento;
 import eventplanner.servico.GerenciadorEventos;
 
@@ -8,8 +9,11 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.LocalDate;  // (ALEM das aulas)
 import java.time.YearMonth;  // (ALEM das aulas) representa "mes/ano"
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -41,6 +45,13 @@ public class PainelCalendario extends JPanel {
      */
     public interface OuvinteDeDia {
         void diaSelecionado(LocalDate dia);
+
+        /**
+         * Avisado no DUPLO-clique de um dia (abre a janela de linha do tempo).
+         * Metodo DEFAULT (Cap. 8): quem nao quiser tratar o duplo-clique nao
+         * precisa implementar nada.
+         */
+        default void diaAbrirDetalhe(LocalDate dia) {}
     }
 
     // Nomes em portugues (evita depender de configuracao regional do sistema).
@@ -49,6 +60,8 @@ public class PainelCalendario extends JPanel {
         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
     };
     private static final String[] DIAS_SEMANA = { "Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab" };
+    // Cor de fundo dos finais de semana (mais escura que os dias uteis).
+    private static final Color COR_FIM_SEMANA = new Color(0xBF, 0xC4, 0xCB);
 
     private final GerenciadorEventos gerenciador;
     private final OuvinteDeDia ouvinte;
@@ -107,8 +120,12 @@ public class PainelCalendario extends JPanel {
         JPanel centro = new JPanel(new BorderLayout());
 
         JPanel cabecalho = new JPanel(new GridLayout(1, 7));
-        for (String d : DIAS_SEMANA) {
-            JLabel l = new JLabel(d, SwingConstants.CENTER);
+        for (int i = 0; i < DIAS_SEMANA.length; i++) {
+            JLabel l = new JLabel(DIAS_SEMANA[i], SwingConstants.CENTER);
+            if (i == 0 || i == 6) { // Dom e Sab: destaque mais escuro
+                l.setOpaque(true);
+                l.setBackground(COR_FIM_SEMANA);
+            }
             cabecalho.add(l);
         }
         centro.add(cabecalho, BorderLayout.NORTH);
@@ -149,13 +166,35 @@ public class PainelCalendario extends JPanel {
             JButton botaoDia = new JButton(String.valueOf(dia));
             botaoDia.setOpaque(true); // necessario para a cor de fundo aparecer
 
-            // Destaque: se ha evento no dia, pinta com a cor da categoria do 1o evento.
+            // Finais de semana (Dom/Sab) recebem um fundo mais escuro.
+            int colunaDoDia = data.getDayOfWeek().getValue() % 7; // Dom=0 ... Sab=6
+            if (colunaDoDia == 0 || colunaDoDia == 6) {
+                botaoDia.setBackground(COR_FIM_SEMANA);
+            }
+
+            // Destaque: faixa colorida com a cor de CADA categoria presente no
+            // dia (varios tipos de evento -> varias cores). O numero do dia fica
+            // em cima e as faixas embaixo (icone IconeCategorias).
             Vector<Evento> doDia = gerenciador.eventosDoDia(data);
             if (!doDia.isEmpty()) {
-                Color cor = doDia.firstElement().getCategoria().getCor();
-                botaoDia.setBackground(cor);
-                botaoDia.setForeground(Color.WHITE);
-                botaoDia.setToolTipText(doDia.size() + " evento(s)");
+                ArrayList<Color> cores = new ArrayList<Color>();
+                StringBuilder tip = new StringBuilder("<html>");
+                // Percorre na ordem do enum para uma ordem de cores estavel.
+                for (Categoria cat : Categoria.values()) {
+                    int qtd = 0;
+                    for (int k = 0; k < doDia.size(); k++) {
+                        if (doDia.elementAt(k).getCategoria() == cat) qtd++;
+                    }
+                    if (qtd > 0) {
+                        cores.add(cat.getCor());
+                        tip.append(cat.getRotulo()).append(": ").append(qtd).append("<br>");
+                    }
+                }
+                tip.append("</html>");
+                botaoDia.setIcon(new IconeCategorias(cores.toArray(new Color[0]), 42, 8));
+                botaoDia.setVerticalTextPosition(SwingConstants.TOP);
+                botaoDia.setHorizontalTextPosition(SwingConstants.CENTER);
+                botaoDia.setToolTipText(tip.toString());
             }
 
             // Marca o dia de hoje com uma borda escura.
@@ -163,10 +202,16 @@ public class PainelCalendario extends JPanel {
                 botaoDia.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 2));
             }
 
-            // Ao clicar, avisa o ouvinte (a JanelaPrincipal) qual dia foi escolhido.
+            // Clique simples: seleciona o dia (agenda lateral).
             botaoDia.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
                     ouvinte.diaSelecionado(data);
+                }
+            });
+            // Duplo-clique: abre a janela de linha do tempo (dia).
+            botaoDia.addMouseListener(new MouseAdapter() {
+                @Override public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) ouvinte.diaAbrirDetalhe(data);
                 }
             });
 
