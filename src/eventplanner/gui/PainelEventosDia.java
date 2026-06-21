@@ -6,14 +6,18 @@ import eventplanner.modelo.Participante;
 import eventplanner.servico.GerenciadorEventos;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.time.LocalDate;
 import java.util.Vector;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -82,6 +86,17 @@ public class PainelEventosDia extends JPanel {
         modeloLista = new DefaultListModel<Evento>();
         lista = new JList<Evento>(modeloLista);
         lista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        // Renderizador proprio (polimorfismo - Cap. 8): quebra o texto do evento
+        // em varias linhas conforme a LARGURA atual da coluna, em vez de cortar.
+        lista.setCellRenderer(new RenderizadorEventoQuebra());
+        // Quando a coluna muda de tamanho, manda o JList recalcular as alturas
+        // das celulas (com a nova largura) para a quebra acompanhar a janela.
+        lista.addComponentListener(new ComponentAdapter() {
+            @Override public void componentResized(ComponentEvent e) {
+                lista.setFixedCellHeight(10);  // forca o recalculo de layout...
+                lista.setFixedCellHeight(-1);  // ...e volta a usar a altura do renderizador
+            }
+        });
         add(new JScrollPane(lista), BorderLayout.CENTER); // JScrollPane = barra de rolagem (Cap. 13)
 
         // -------- Rodape: detalhes do evento selecionado --------
@@ -231,5 +246,33 @@ public class PainelEventosDia extends JPanel {
      */
     private String formatar(LocalDate d) {
         return String.format("%02d/%02d/%04d", d.getDayOfMonth(), d.getMonthValue(), d.getYear());
+    }
+
+    /**
+     * Renderizador de celula que QUEBRA o texto em varias linhas conforme a
+     * largura da lista (em vez de deixar o nome do evento atravessar a borda).
+     *
+     * HERANCA/POLIMORFISMO (Cap. 8): estende DefaultListCellRenderer e usa um
+     * rotulo HTML com largura fixa, recurso do Swing para fazer o texto fluir.
+     */
+    private static class RenderizadorEventoQuebra extends DefaultListCellRenderer {
+        @Override
+        public Component getListCellRendererComponent(JList<?> lista, Object valor,
+                int indice, boolean selecionado, boolean comFoco) {
+            JLabel rotulo = (JLabel) super.getListCellRendererComponent(
+                    lista, valor, indice, selecionado, comFoco);
+            int largura = lista.getWidth();
+            if (largura > 24 && valor != null) {
+                // 'width:Npx' faz o HTML quebrar a linha na largura disponivel.
+                rotulo.setText("<html><body style='width:" + (largura - 24) + "px'>"
+                        + escaparHtml(valor.toString()) + "</body></html>");
+            }
+            return rotulo;
+        }
+
+        /** Evita que '<', '>' ou '&' do titulo quebrem o HTML do rotulo. */
+        private static String escaparHtml(String s) {
+            return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+        }
     }
 }
