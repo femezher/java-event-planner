@@ -6,6 +6,7 @@ import eventplanner.modelo.Evento;
 import eventplanner.modelo.Participante;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -116,6 +117,10 @@ public class DialogoEvento extends JDialog {
         ButtonGroup grupoCategoria = new ButtonGroup(); // garante que so 1 fica marcado
         for (int i = 0; i < categorias.length; i++) {
             radiosCategoria[i] = new JRadioButton(categorias[i].getRotulo());
+            // Cada opcao recebe a COR da categoria (a mesma usada no card da
+            // linha do tempo), em negrito, para o usuario associar tipo <-> cor.
+            radiosCategoria[i].setForeground(categorias[i].getCor());
+            radiosCategoria[i].setFont(radiosCategoria[i].getFont().deriveFont(Font.BOLD));
             grupoCategoria.add(radiosCategoria[i]);
             painelCategoria.add(radiosCategoria[i]);
         }

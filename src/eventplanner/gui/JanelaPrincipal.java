@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 /**
  * Janela principal da aplicacao.
@@ -43,6 +44,8 @@ public class JanelaPrincipal extends JFrame
     private final PainelCalendario painelCalendario;
     private final PainelEventosDia painelDia;
     private final PainelAgenda painelAgenda;             // 3a coluna: linha do tempo
+    private JSplitPane splitPrincipal;                   // calendario | (dia | linha do tempo)
+    private JSplitPane splitDireito;                     // dia | linha do tempo
     private final JTextField campoBusca = new JTextField(16);
     private LocalDate diaSelecionado = LocalDate.now();  // dia atualmente em foco
 
@@ -71,14 +74,23 @@ public class JanelaPrincipal extends JFrame
             @Override public void run() { atualizarTudo(); }
         });
 
+        // Tamanho MINIMO de cada coluna: garante que NENHUMA suma quando a
+        // janela e reduzida (em especial a linha do tempo, sempre presente).
+        painelCalendario.setMinimumSize(new java.awt.Dimension(170, 0));
+        painelDia.setMinimumSize(new java.awt.Dimension(160, 0));
+        painelAgenda.setMinimumSize(new java.awt.Dimension(220, 0));
+
         // Coluna 2 (dia) + coluna 3 (linha do tempo) num split aninhado.
-        JSplitPane splitDireito = new JSplitPane(
-                JSplitPane.HORIZONTAL_SPLIT, painelDia, painelAgenda);
+        // resizeWeight distribui o espaco PROPORCIONALMENTE ao redimensionar:
+        // a coluna do dia fica com ~43% do bloco direito; a linha do tempo ~57%.
+        splitDireito = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, painelDia, painelAgenda);
         splitDireito.setContinuousLayout(true);
-        // Coluna 1 (calendario) + as duas a direita.
-        JSplitPane splitPrincipal = new JSplitPane(
-                JSplitPane.HORIZONTAL_SPLIT, painelCalendario, splitDireito);
+        splitDireito.setResizeWeight(0.43);
+
+        // Coluna 1 (calendario) + as duas a direita. Calendario fica com ~30%.
+        splitPrincipal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, painelCalendario, splitDireito);
         splitPrincipal.setContinuousLayout(true);
+        splitPrincipal.setResizeWeight(0.30);
         add(splitPrincipal, BorderLayout.CENTER);
 
         // ---------- Menu Arquivo (Cap. 13 "Menus") ----------
@@ -106,7 +118,23 @@ public class JanelaPrincipal extends JFrame
         });
 
         pack();
+
+        // Impede que a janela encolha a ponto de esconder qualquer painel
+        // (a soma dos minimos das 3 colunas cabe nesta largura).
+        setMinimumSize(new java.awt.Dimension(820, 520));
         setLocationRelativeTo(null); // centraliza na tela
+
+        // Posiciona as divisorias nas fracoes desejadas (calendario 30%; dentro
+        // do bloco direito, dia 43% e linha do tempo 57%). Feito em invokeLater
+        // para rodar DEPOIS de a janela receber seu tamanho final e ficar visivel
+        // (senao setDividerLocation(double) nao teria tamanho de referencia). O
+        // resizeWeight mantem essas proporcoes nos redimensionamentos seguintes.
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                splitPrincipal.setDividerLocation(0.30);
+                splitDireito.setDividerLocation(0.43);
+            }
+        });
     }
 
     private void construirMenu() {

@@ -8,6 +8,7 @@ import eventplanner.servico.GerenciadorEventos;
 
 import java.util.Vector;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -49,7 +50,11 @@ public class EventPlannerApp {
             @Override
             public void run() {
                 JanelaPrincipal janela = new JanelaPrincipal(gerenciador);
-                janela.setSize(720, 460);
+                // Tamanho "restaurado" (caso o usuario saia do maximizado depois).
+                janela.setSize(1180, 720);
+                janela.setLocationRelativeTo(null);
+                // Abre em TELA CHEIA (maximizada, ocupando toda a area de trabalho).
+                janela.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 janela.setVisible(true);
 
                 // Lembretes das proximas 24h.

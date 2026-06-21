@@ -84,7 +84,12 @@ public class PainelEventosDia extends JPanel {
 
         // -------- Centro: lista de eventos do dia --------
         modeloLista = new DefaultListModel<Evento>();
-        lista = new JList<Evento>(modeloLista);
+        // JList que ACOMPANHA a largura do viewport (nao cresce com o maior card):
+        // assim o renderizador pode quebrar o texto na largura visivel, sem que
+        // a celula passe da borda do painel nem surja rolagem horizontal.
+        lista = new JList<Evento>(modeloLista) {
+            @Override public boolean getScrollableTracksViewportWidth() { return true; }
+        };
         lista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         // Renderizador proprio (polimorfismo - Cap. 8): quebra o texto do evento
         // em varias linhas conforme a LARGURA atual da coluna, em vez de cortar.
