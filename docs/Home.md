@@ -13,6 +13,7 @@ em arquivo e validação de entradas.
 
 | Página | Conteúdo |
 |---|---|
+| [Classes (UML)](Classes.md) | **Ficha de cada classe com a imagem do diagrama**, herança, polimorfismo e exceptions |
 | [Arquitetura](Arquitetura.md) | Camadas MVC, pacotes, diagrama de classes e o fluxo de um clique |
 | [Conceitos de POO](Conceitos-POO.md) | Herança, polimorfismo, interfaces, composição e exceções |
 | [Como Executar](Como-Executar.md) | Compilar e rodar (macOS/Linux/Windows) |

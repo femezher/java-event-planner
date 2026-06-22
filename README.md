@@ -12,6 +12,7 @@ Versão **Compacta (SCC0504)**.
 > Diagrama de classes: ver **`diagrama_classes.puml`** (PNG/SVG gerados em
 > `diagrama_classes.png` / `.svg`).
 > Explicação detalhada de cada classe: ver **`EXPLICACAO_CLASSES.md`**.
+> Ficha de cada classe **com a imagem do diagrama**: ver **[`docs/Classes.md`](docs/Classes.md)**.
 
 ---
 
