@@ -1,10 +1,15 @@
 # Java Event Planner — Agenda de Eventos (SCC0504)
 
 Aplicação desktop em **Java + Swing** para gerenciar eventos num **calendário
-mensal**, com lista diária, busca, lembretes na inicialização, persistência em
-arquivo e validação de entradas. Versão **Compacta (SCC0504)**.
+mensal**, com lista diária, **linha do tempo (estilo Outlook, modos Dia/Semana)**,
+busca, lembretes na inicialização, persistência em arquivo e validação de
+entradas. A janela abre em **tela cheia**, dividida em **três colunas
+redimensionáveis** (`JSplitPane`): calendário · lista do dia · linha do tempo.
+Versão **Compacta (SCC0504)**.
 
-> Diagrama de classes: ver **`diagrama_classes.puml`**.
+> Diagrama de classes: ver **`diagrama_classes.puml`** (PNG/SVG gerados em
+> `diagrama_classes.png` / `.svg`).
+> Explicação detalhada de cada classe: ver **`EXPLICACAO_CLASSES.md`**.
 
 ---
 
@@ -41,7 +46,8 @@ src/eventplanner/
 ├── excecao/       ValidacaoException + TituloVazio/DataInvalida/HoraInvalida/EmailInvalido
 ├── persistencia/  RepositorioEventos (interface) + RepositorioEventosCSV
 ├── servico/       GerenciadorEventos  (regras de negócio / validação / busca / lembretes)
-├── gui/           JanelaPrincipal, PainelCalendario, PainelEventosDia, DialogoEvento, IntField
+├── gui/           JanelaPrincipal, PainelCalendario, PainelEventosDia,
+│                  PainelAgenda, PainelLinhaTempo, IconeCategorias, DialogoEvento, IntField
 └── app/           EventPlannerApp  (main)
 dados/eventos.csv  arquivo de dados de exemplo
 ```
@@ -56,14 +62,16 @@ que fala com a `persistencia`.
 | Funcionalidade | Implementação |
 |---|---|
 | Calendário mensal + navegação + "Hoje" | `gui/PainelCalendario.java` |
-| Dias com evento destacados (cor da categoria) | `gui/PainelCalendario.java` |
+| Dias com evento destacados (cores de **todas** as categorias do dia) | `gui/PainelCalendario.java`, `gui/IconeCategorias.java` |
 | Lista do dia + detalhes + participantes | `gui/PainelEventosDia.java` |
+| **Linha do tempo (Dia/Semana), estilo Outlook, com cards coloridos** | `gui/PainelAgenda.java`, `gui/PainelLinhaTempo.java` |
+| Janela em 3 colunas redimensionáveis + tela cheia | `gui/JanelaPrincipal.java`, `app/EventPlannerApp.java` |
 | Criar / editar / excluir evento | `gui/DialogoEvento.java`, `servico/GerenciadorEventos.java` |
 | Buscar por palavra-chave | `servico/GerenciadorEventos#buscarPorTexto` |
 | Lembretes (próximas 24h, na inicialização) | `servico/GerenciadorEventos#lembretesProximos`, `app/EventPlannerApp` |
 | Persistência CSV + carga tolerante a falhas | `persistencia/RepositorioEventosCSV.java` |
 | Validação + mensagens amigáveis (sem stack trace) | pacote `excecao` + `JOptionPane` |
-| Categorias coloridas (opcional) | `modelo/Categoria.java` |
+| Categorias coloridas (opcional) | `modelo/Categoria.java`, `gui/IconeCategorias.java` |
 | Participantes nome+e-mail (opcional) | `modelo/Participante.java` |
 
 ---
@@ -71,9 +79,12 @@ que fala com a `persistencia`.
 ## Conceitos de POO aplicados (resumo para o relatório)
 
 - **Encapsulamento:** atributos `private` + getters/setters (Cap. 3).
-- **Herança:** `JanelaPrincipal extends JFrame`, `IntField extends JTextField`,
-  e a hierarquia de exceções `... extends ValidacaoException extends Exception`.
-- **Polimorfismo:** `toString()` sobrescrito; interface `RepositorioEventos`;
+- **Herança:** `JanelaPrincipal extends JFrame`, painéis `extends JPanel`,
+  `IntField extends JTextField`, e a hierarquia de exceções
+  `... extends ValidacaoException extends Exception`.
+- **Polimorfismo:** `toString()` e `paintComponent()` sobrescritos; realização de
+  interfaces do Swing (`PainelLinhaTempo implements Scrollable`,
+  `IconeCategorias implements Icon`) e a interface `RepositorioEventos`;
   `catch (ValidacaoException)` pega qualquer subclasse.
 - **Abstração:** interface `RepositorioEventos` (troca CSV por outro sem afetar o resto).
 - **Composição:** `Evento` tem `Vector<Participante>`, `Categoria`, `Antecedencia`.
