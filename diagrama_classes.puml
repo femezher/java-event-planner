@@ -1,13 +1,20 @@
 @startuml Java_Event_Planner
 ' =====================================================================
 ' Diagrama de Classes - Java Event Planner (SCC0504 - Versao Compacta)
-' Renderize em https://www.plantsuml.com ou na extensao PlantUML do VSCode.
+' Renderize em https://www.plantuml.com ou na extensao PlantUML do VSCode.
 ' Para exportar PNG:  java -jar plantuml.jar diagrama_classes.puml
 ' =====================================================================
 skinparam classAttributeIconSize 0
 skinparam shadowing false
 skinparam linetype ortho
 title Java Event Planner — Diagrama de Classes
+
+' --------------------- APP (ponto de entrada) ---------------------
+package "app" {
+  class EventPlannerApp {
+    +{static} main(args : String[])
+  }
+}
 
 ' --------------------- MODELO (estado / dados) ---------------------
 package "modelo" {
@@ -20,6 +27,7 @@ package "modelo" {
     -cor : Color
     +getRotulo() : String
     +getCor() : Color
+    +toString() : String
   }
   enum Antecedencia {
     UM_DIA
@@ -28,6 +36,7 @@ package "modelo" {
     --
     -duracao : Duration
     +getDuracao() : Duration
+    +toString() : String
   }
   class Participante {
     -nome : String
@@ -42,8 +51,10 @@ package "modelo" {
     -hora : LocalTime
     -local : String
     -descricao : String
+    +getDataHora() : LocalDateTime
     +getInstanteLembrete() : LocalDateTime
     +addParticipante(p : Participante)
+    +getParticipantes() : Vector<Participante>
     +toString() : String
   }
 }
@@ -74,11 +85,14 @@ package "persistencia" {
 package "servico" {
   class GerenciadorEventos {
     -eventos : Vector<Evento>
+    -repositorio : RepositorioEventos
     +adicionar(e : Evento)
     +editar(antigo, novo : Evento)
     +remover(e : Evento)
+    +getEventos() : Vector<Evento>
     +buscarPorTexto(termo : String) : Vector<Evento>
     +eventosDoDia(dia : LocalDate) : Vector<Evento>
+    +temEventoNoDia(dia : LocalDate) : boolean
     +lembretesProximos() : Vector<Evento>
     +salvar()
   }
@@ -86,18 +100,60 @@ package "servico" {
 
 ' --------------------- GUI (Swing / view) ---------------------
 package "gui" {
-  class JanelaPrincipal
-  class PainelCalendario
-  class PainelEventosDia
-  class DialogoEvento
-  class IntField
+  class JanelaPrincipal {
+    +diaSelecionado(dia : LocalDate)
+    +aoAlterarEventos()
+  }
+  class PainelCalendario {
+    -mesAtual : YearMonth
+    +atualizar()
+  }
+  interface "PainelCalendario.OuvinteDeDia" as OuvinteDeDia {
+    +diaSelecionado(dia : LocalDate)
+    +diaAbrirDetalhe(dia : LocalDate)
+  }
+  class PainelEventosDia {
+    -diaAtual : LocalDate
+    +mostrarDia(dia : LocalDate)
+    +mostrarResultados(...)
+    +recarregar()
+  }
+  interface "PainelEventosDia.Atualizavel" as Atualizavel {
+    +aoAlterarEventos()
+  }
+  class PainelAgenda {
+    -referencia : LocalDate
+    -modoSemana : boolean
+    +mostrarDia(dia : LocalDate)
+    +recarregar()
+  }
+  class PainelLinhaTempo {
+    -dias : LocalDate[]
+    +criarCabecalho(titulos : String[]) : JComponent
+    #paintComponent(g : Graphics)
+    +getToolTipText(ev : MouseEvent) : String
+  }
+  class IconeCategorias {
+    -cores : Color[]
+    +paintIcon(c, g, x, y)
+    +getIconWidth() : int
+    +getIconHeight() : int
+  }
+  class DialogoEvento {
+    +getEventoResultado() : Evento
+  }
+  class IntField {
+    +getInt() : int
+  }
 }
 
-' Classes externas do Java (apenas para mostrar a heranca de Swing)
+' Classes/interfaces externas do Java (apenas para mostrar a heranca)
 class JFrame <<Swing>>
 class JPanel <<Swing>>
 class JDialog <<Swing>>
 class JTextField <<Swing>>
+interface Scrollable <<Swing>>
+interface Icon <<Swing>>
 class Exception <<java.lang>>
 
 ' ===================== RELACIONAMENTOS =====================
@@ -122,20 +178,43 @@ GerenciadorEventos --> RepositorioEventos : usa
 GerenciadorEventos o-- "0..*" Evento : eventos
 GerenciadorEventos ..> ValidacaoException : lança
 
-' Heranca de componentes Swing
+' Ponto de entrada (main "monta" a aplicacao)
+EventPlannerApp ..> RepositorioEventosCSV : cria
+EventPlannerApp ..> GerenciadorEventos : cria
+EventPlannerApp ..> JanelaPrincipal : abre
+
+' Heranca de componentes Swing e realizacao de interfaces Swing
 JFrame <|-- JanelaPrincipal
 JPanel <|-- PainelCalendario
 JPanel <|-- PainelEventosDia
+JPanel <|-- PainelAgenda
+JPanel <|-- PainelLinhaTempo
 JDialog <|-- DialogoEvento
 JTextField <|-- IntField
+Scrollable <|.. PainelLinhaTempo
+Icon <|.. IconeCategorias
 
-' Composicao/uso na GUI
+' Interfaces-papel internas da GUI (polimorfismo do MVC)
+PainelCalendario +-- OuvinteDeDia
+PainelEventosDia +-- Atualizavel
+OuvinteDeDia <|.. JanelaPrincipal
+Atualizavel <|.. JanelaPrincipal
+PainelCalendario --> OuvinteDeDia : avisa
+PainelEventosDia --> Atualizavel : avisa
+
+' Composicao/uso na GUI (3 colunas: calendario | dia | linha do tempo)
 JanelaPrincipal *-- PainelCalendario
 JanelaPrincipal *-- PainelEventosDia
+JanelaPrincipal *-- PainelAgenda
 JanelaPrincipal --> GerenciadorEventos
 PainelCalendario --> GerenciadorEventos
+PainelCalendario ..> IconeCategorias : usa
 PainelEventosDia --> GerenciadorEventos
 PainelEventosDia ..> DialogoEvento : abre
+PainelAgenda --> GerenciadorEventos
+PainelAgenda *-- PainelLinhaTempo
+PainelLinhaTempo --> GerenciadorEventos
+PainelLinhaTempo ..> DialogoEvento : abre
 DialogoEvento ..> Evento : cria
 DialogoEvento *-- IntField
 

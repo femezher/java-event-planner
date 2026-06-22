@@ -25,7 +25,22 @@ digraph EventPlanner {
     JPanel     [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="3"><TR><TD><I>«Swing»</I><BR/><B>JPanel</B></TD></TR></TABLE>>];
     JDialog    [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="3"><TR><TD><I>«Swing»</I><BR/><B>JDialog</B></TD></TR></TABLE>>];
     JTextField [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="3"><TR><TD><I>«Swing»</I><BR/><B>JTextField</B></TD></TR></TABLE>>];
+    Scrollable [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="3"><TR><TD><I>«interface Swing»</I><BR/><B>Scrollable</B></TD></TR></TABLE>>];
+    Icon       [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="3"><TR><TD><I>«interface Swing»</I><BR/><B>Icon</B></TD></TR></TABLE>>];
     Exception  [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="3"><TR><TD><I>«java.lang»</I><BR/><B>Exception</B></TD></TR></TABLE>>];
+  }
+
+  // ----------------------------------------------------------------
+  // Pacote app (ponto de entrada)
+  // ----------------------------------------------------------------
+  subgraph cluster_app {
+    label="app"; style="rounded"; color="#5f6368"; fontsize=13;
+
+    EventPlannerApp [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>EventPlannerApp</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ main(args : String[]) : void</TD></TR>
+      </TABLE>>];
   }
 
   // ----------------------------------------------------------------
@@ -38,7 +53,7 @@ digraph EventPlanner {
       <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
         <TR><TD><B>Evento</B></TD></TR>
         <TR><TD ALIGN="LEFT" BALIGN="LEFT">- titulo : String<BR/>- data : LocalDate<BR/>- hora : LocalTime<BR/>- local : String<BR/>- descricao : String<BR/>- participantes : Vector&lt;Participante&gt;</TD></TR>
-        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getInstanteLembrete() : LocalDateTime<BR/>+ addParticipante(p : Participante) : void<BR/>+ get/set...()<BR/>+ toString() : String</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getDataHora() : LocalDateTime<BR/>+ getInstanteLembrete() : LocalDateTime<BR/>+ addParticipante(p : Participante) : void<BR/>+ get/set...()<BR/>+ toString() : String</TD></TR>
       </TABLE>>];
 
     Participante [label=<
@@ -52,14 +67,14 @@ digraph EventPlanner {
       <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
         <TR><TD><I>«enumeration»</I><BR/><B>Categoria</B></TD></TR>
         <TR><TD ALIGN="LEFT" BALIGN="LEFT">REUNIAO<BR/>ANIVERSARIO<BR/>COMPROMISSO</TD></TR>
-        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getRotulo() : String<BR/>+ getCor() : Color</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getRotulo() : String<BR/>+ getCor() : Color<BR/>+ toString() : String</TD></TR>
       </TABLE>>];
 
     Antecedencia [label=<
       <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
         <TR><TD><I>«enumeration»</I><BR/><B>Antecedencia</B></TD></TR>
         <TR><TD ALIGN="LEFT" BALIGN="LEFT">UM_DIA<BR/>TRES_DIAS<BR/>UMA_SEMANA</TD></TR>
-        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getDuracao() : Duration</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getDuracao() : Duration<BR/>+ toString() : String</TD></TR>
       </TABLE>>];
   }
 
@@ -110,7 +125,7 @@ digraph EventPlanner {
       <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
         <TR><TD><B>GerenciadorEventos</B></TD></TR>
         <TR><TD ALIGN="LEFT" BALIGN="LEFT">- eventos : Vector&lt;Evento&gt;<BR/>- repositorio : RepositorioEventos</TD></TR>
-        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ adicionar(e : Evento) : void<BR/>+ editar(antigo, novo : Evento) : void<BR/>+ remover(e : Evento) : void<BR/>+ buscarPorTexto(t : String) : Vector&lt;Evento&gt;<BR/>+ eventosDoDia(d : LocalDate) : Vector&lt;Evento&gt;<BR/>+ lembretesProximos() : Vector&lt;Evento&gt;<BR/>+ salvar() : void</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ adicionar(e : Evento) : void<BR/>+ editar(antigo, novo : Evento) : void<BR/>+ remover(e : Evento) : void<BR/>+ getEventos() : Vector&lt;Evento&gt;<BR/>+ buscarPorTexto(t : String) : Vector&lt;Evento&gt;<BR/>+ eventosDoDia(d : LocalDate) : Vector&lt;Evento&gt;<BR/>+ temEventoNoDia(d : LocalDate) : boolean<BR/>+ lembretesProximos() : Vector&lt;Evento&gt;<BR/>+ salvar() : void</TD></TR>
       </TABLE>>];
   }
 
@@ -131,11 +146,39 @@ digraph EventPlanner {
         <TR><TD ALIGN="LEFT" BALIGN="LEFT">- mesAtual : YearMonth</TD></TR>
         <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ atualizar() : void</TD></TR>
       </TABLE>>];
+    OuvinteDeDia [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><I>«interface»</I><BR/><B>PainelCalendario.OuvinteDeDia</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ diaSelecionado(dia : LocalDate) : void<BR/>+ diaAbrirDetalhe(dia : LocalDate) : void</TD></TR>
+      </TABLE>>];
     PainelEventosDia [label=<
       <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
         <TR><TD><B>PainelEventosDia</B></TD></TR>
         <TR><TD ALIGN="LEFT" BALIGN="LEFT">- diaAtual : LocalDate</TD></TR>
-        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ mostrarDia(dia : LocalDate) : void<BR/>+ mostrarResultados(...) : void</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ mostrarDia(dia : LocalDate) : void<BR/>+ mostrarResultados(...) : void<BR/>+ recarregar() : void</TD></TR>
+      </TABLE>>];
+    Atualizavel [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><I>«interface»</I><BR/><B>PainelEventosDia.Atualizavel</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ aoAlterarEventos() : void</TD></TR>
+      </TABLE>>];
+    PainelAgenda [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>PainelAgenda</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">- referencia : LocalDate<BR/>- modoSemana : boolean</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ mostrarDia(dia : LocalDate) : void<BR/>+ recarregar() : void</TD></TR>
+      </TABLE>>];
+    PainelLinhaTempo [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>PainelLinhaTempo</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">- dias : LocalDate[]<BR/>- cards : ArrayList&lt;Card&gt;</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"># paintComponent(g : Graphics) : void<BR/>+ getToolTipText(ev : MouseEvent) : String<BR/>+ criarCabecalho(titulos : String[]) : JComponent</TD></TR>
+      </TABLE>>];
+    IconeCategorias [label=<
+      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD><B>IconeCategorias</B></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">- cores : Color[]<BR/>- largura : int<BR/>- altura : int</TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT">+ paintIcon(c, g, x, y) : void<BR/>+ getIconWidth() : int<BR/>+ getIconHeight() : int</TD></TR>
       </TABLE>>];
     DialogoEvento [label=<
       <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
@@ -158,6 +201,8 @@ digraph EventPlanner {
   JFrame     -> JanelaPrincipal;
   JPanel     -> PainelCalendario;
   JPanel     -> PainelEventosDia;
+  JPanel     -> PainelAgenda;
+  JPanel     -> PainelLinhaTempo;
   JDialog    -> DialogoEvento;
   JTextField -> IntField;
   Exception          -> ValidacaoException;
@@ -169,16 +214,27 @@ digraph EventPlanner {
   // ---- Realizacao / implements (triangulo vazado tracejado) ----
   edge [dir=back, arrowtail=empty, style=dashed, color="black"];
   RepositorioEventos -> RepositorioEventosCSV;
+  Scrollable         -> PainelLinhaTempo;
+  Icon               -> IconeCategorias;
+  OuvinteDeDia       -> JanelaPrincipal;
+  Atualizavel        -> JanelaPrincipal;
+
+  // ---- Classe aninhada (interfaces-papel internas) ----
+  edge [dir=forward, arrowhead=odiamond, style=solid, color="#888888"];
+  PainelCalendario -> OuvinteDeDia;
+  PainelEventosDia -> Atualizavel;
 
   // ---- Composicao (losango cheio no "todo") ----
-  edge [dir=back, arrowtail=diamond, style=solid, color="black"];
+  edge [dir=back, arrowtail=diamond, arrowhead=none, style=solid, color="black"];
   Evento          -> Participante      [headlabel="0..*"];
   JanelaPrincipal -> PainelCalendario;
   JanelaPrincipal -> PainelEventosDia;
+  JanelaPrincipal -> PainelAgenda;
+  PainelAgenda    -> PainelLinhaTempo;
   DialogoEvento   -> IntField;
 
   // ---- Agregacao (losango vazado): Gerenciador o-- Evento ----
-  edge [dir=back, arrowtail=odiamond, style=solid, color="black"];
+  edge [dir=back, arrowtail=odiamond, arrowhead=none, style=solid, color="black"];
   GerenciadorEventos -> Evento [headlabel="0..*"];
 
   // ---- Associacao / uso (seta aberta) ----
@@ -189,9 +245,18 @@ digraph EventPlanner {
   JanelaPrincipal    -> GerenciadorEventos [label="usa"];
   PainelCalendario   -> GerenciadorEventos [label="usa"];
   PainelEventosDia   -> GerenciadorEventos [label="usa"];
+  PainelAgenda       -> GerenciadorEventos [label="usa"];
+  PainelLinhaTempo   -> GerenciadorEventos [label="usa"];
+  PainelCalendario   -> OuvinteDeDia       [label="avisa"];
+  PainelEventosDia   -> Atualizavel        [label="avisa"];
 
   // ---- Dependencia (tracejada): cria / abre ----
   edge [dir=forward, arrowhead=vee, style=dashed, color="#444444"];
-  PainelEventosDia -> DialogoEvento [label="abre"];
-  DialogoEvento    -> Evento        [label="cria"];
+  EventPlannerApp  -> RepositorioEventosCSV [label="cria"];
+  EventPlannerApp  -> GerenciadorEventos    [label="cria"];
+  EventPlannerApp  -> JanelaPrincipal       [label="abre"];
+  PainelCalendario -> IconeCategorias       [label="usa"];
+  PainelEventosDia -> DialogoEvento         [label="abre"];
+  PainelLinhaTempo -> DialogoEvento         [label="abre"];
+  DialogoEvento    -> Evento                [label="cria"];
 }
