@@ -1,9 +1,30 @@
-# Arquivo de dados do Java Event Planner (gerado/manipulado automaticamente).
-# Linhas iniciadas por '#' sao comentarios e sao ignoradas na leitura.
-# Formato: titulo,data,hora,local,categoria,antecedencia,descricao,participantes
-# categoria = REUNIAO | ANIVERSARIO | COMPROMISSO
-# antecedencia = UM_DIA | TRES_DIAS | UMA_SEMANA
-# participantes = nome:email;nome:email;...
+# titulo,data,hora,local,categoria,antecedencia,descricao,participantes
 Reuniao de TCC,2026-06-21,14:30,Sala 3-001,REUNIAO,UM_DIA,Revisar o capitulo 2 do relatorio,Ana:ana@usp.br;Beto:beto@usp.br
 Aniversario da Maria,2026-06-22,09:00,Casa,ANIVERSARIO,TRES_DIAS,Levar bolo de chocolate,
 Consulta medica,2026-06-25,16:00,Clinica Central,COMPROMISSO,UM_DIA,Levar exames recentes,Carlos:carlos@usp.br
+ENtrega Trabalho POO,2026-06-22,12:00,Moode,COMPROMISSO,UM_DIA,,fernando:fernandomezher@usp.br
+APRESENTAÇÃO TRABALHO POO,2026-06-22,19:00,USP - ICMC,COMPROMISSO,UM_DIA,Apresentação de 10 minutos,
+# --- Recorrentes: reuniao semanal de equipe (segundas 09:00) ---
+Reuniao semanal de equipe,2026-06-29,09:00,Sala 2-101,REUNIAO,UM_DIA,Alinhamento semanal do projeto,Joao:joao@empresa.com;Marina:marina@empresa.com
+Reuniao semanal de equipe,2026-07-06,09:00,Sala 2-101,REUNIAO,UM_DIA,Alinhamento semanal do projeto,Joao:joao@empresa.com;Marina:marina@empresa.com
+Reuniao semanal de equipe,2026-07-13,09:00,Sala 2-101,REUNIAO,UM_DIA,Alinhamento semanal do projeto,Joao:joao@empresa.com;Marina:marina@empresa.com
+Reuniao semanal de equipe,2026-07-20,09:00,Sala 2-101,REUNIAO,UM_DIA,Alinhamento semanal do projeto,Joao:joao@empresa.com;Marina:marina@empresa.com
+# --- Recorrentes: aula de ingles (tercas 19:30) ---
+Aula de ingles,2026-06-23,19:30,Cultura Inglesa,COMPROMISSO,UM_DIA,Unidade 5 - past perfect,
+Aula de ingles,2026-06-30,19:30,Cultura Inglesa,COMPROMISSO,UM_DIA,Unidade 6 - reported speech,
+Aula de ingles,2026-07-07,19:30,Cultura Inglesa,COMPROMISSO,UM_DIA,Unidade 7 - conditionals,
+Aula de ingles,2026-07-14,19:30,Cultura Inglesa,COMPROMISSO,UM_DIA,Revisao para a prova,
+# --- Recorrentes: sessao de terapia (quartas 18:00) ---
+Sessao de terapia,2026-06-24,18:00,Consultorio Dra Paula,COMPROMISSO,UM_DIA,Sessao semanal,
+Sessao de terapia,2026-07-08,18:00,Consultorio Dra Paula,COMPROMISSO,UM_DIA,Sessao semanal,
+Sessao de terapia,2026-07-22,18:00,Consultorio Dra Paula,COMPROMISSO,UM_DIA,Sessao semanal,
+# --- Pontuais ---
+Dentista - limpeza,2026-06-25,10:30,Clinica OdontoVida,COMPROMISSO,TRES_DIAS,Limpeza e avaliacao anual,
+Almoco em familia,2026-06-28,12:30,Casa da vovo,COMPROMISSO,UM_DIA,Almoco de domingo com a familia,
+Revisao do carro,2026-07-02,08:00,Oficina do Ze,COMPROMISSO,TRES_DIAS,Troca de oleo e filtros,
+Aniversario do Pedro,2026-07-03,20:00,Buffet Alegria,ANIVERSARIO,UMA_SEMANA,Levar o presente combinado,Pedro:pedro@gmail.com
+Reuniao com orientador,2026-07-09,15:00,Sala 4-220,REUNIAO,UM_DIA,Discutir os resultados parciais,Prof Silva:silva@usp.br
+Show da banda,2026-07-11,21:00,Audio SP,COMPROMISSO,UMA_SEMANA,Comprar ingresso antecipado,Bruno:bruno@gmail.com
+Corte de cabelo,2026-07-16,17:00,Barbearia Navalha,COMPROMISSO,UM_DIA,,
+Aniversario da Sofia,2026-07-18,19:00,Casa da Sofia,ANIVERSARIO,TRES_DIAS,Confirmar presenca na festa,Sofia:sofia@gmail.com
+Viagem para a praia,2026-07-24,06:00,Rodoviaria Tiete,COMPROMISSO,UMA_SEMANA,Fim de semana prolongado na praia,
