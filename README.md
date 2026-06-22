@@ -7,6 +7,8 @@ entradas. A janela abre em **tela cheia**, dividida em **três colunas
 redimensionáveis** (`JSplitPane`): calendário · lista do dia · linha do tempo.
 Versão **Compacta (SCC0504)**.
 
+> 📚 **Documentação completa (wiki):** ver **[`docs/Home.md`](docs/Home.md)** —
+> ou a [aba **Wiki**](../../wiki) do repositório.
 > Diagrama de classes: ver **`diagrama_classes.puml`** (PNG/SVG gerados em
 > `diagrama_classes.png` / `.svg`).
 > Explicação detalhada de cada classe: ver **`EXPLICACAO_CLASSES.md`**.
