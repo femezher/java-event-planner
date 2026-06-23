@@ -1,4 +1,4 @@
-# Java Event Planner — Agenda de Eventos (SCC0504)
+# Java Event Planner — Agenda de Eventos (SCC0504) - Fernando Lopes 12725515
 
 Aplicação desktop em **Java + Swing** para gerenciar eventos num **calendário
 mensal**, com lista diária, **linha do tempo (estilo Outlook, modos Dia/Semana)**,
