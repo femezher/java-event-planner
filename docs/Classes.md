@@ -34,7 +34,7 @@ _Ponto de entrada: monta as camadas (repositório, serviço) e abre a janela pri
 
 módulo `app`
 
-<img src="img/classes/EventPlannerApp.png" alt="EventPlannerApp" width="540">
+![EventPlannerApp](img/classes/EventPlannerApp.png)
 
 - **Descrição:** Classe com o método `main`; inicializa o Look and Feel, a persistência, o serviço e a GUI (criada na thread de eventos via `SwingUtilities.invokeLater`).
 - **Herança:** Não estende outra classe (apenas, implicitamente, `Object`). É uma classe utilitária de inicialização — não faz sentido herdar dela.
@@ -53,7 +53,7 @@ _Model (estado/dados): representa eventos, participantes e os tipos fixos (enums
 
 módulo `modelo`
 
-<img src="img/classes/Evento.png" alt="Evento" width="540">
+![Evento](img/classes/Evento.png)
 
 - **Descrição:** Classe central do Model: guarda título, data, hora, local, descrição, categoria, antecedência e a lista de participantes.
 - **Herança:** Não estende outra classe (só `Object`). Em vez de herança, usa **composição**: TEM-UM `Vector<Participante>`, uma `Categoria` e uma `Antecedencia`.
@@ -65,7 +65,7 @@ módulo `modelo`
 
 módulo `modelo`
 
-<img src="img/classes/Participante.png" alt="Participante" width="540">
+![Participante](img/classes/Participante.png)
 
 - **Descrição:** Dado simples (nome + e-mail) de quem participa de um evento.
 - **Herança:** Não estende outra classe (só `Object`). Classe de dados pura (getters/setters).
@@ -77,7 +77,7 @@ módulo `modelo`
 
 `«enumeration»` · módulo `modelo`
 
-<img src="img/classes/Categoria.png" alt="Categoria" width="540">
+![Categoria](img/classes/Categoria.png)
 
 - **Descrição:** Conjunto fixo de tipos de evento (`REUNIAO`, `ANIVERSARIO`, `COMPROMISSO`), cada um com um rótulo e uma cor.
 - **Herança:** É um **enum**: estende implicitamente `java.lang.Enum` e NÃO pode ser subclassificada — daí a decisão de não criar subclasses de `Evento` por categoria.
@@ -89,7 +89,7 @@ módulo `modelo`
 
 `«enumeration»` · módulo `modelo`
 
-<img src="img/classes/Antecedencia.png" alt="Antecedencia" width="540">
+![Antecedencia](img/classes/Antecedencia.png)
 
 - **Descrição:** Quanto tempo antes avisar (`UM_DIA`, `TRES_DIAS`, `UMA_SEMANA`), cada constante com uma `Duration`.
 - **Herança:** É um **enum** (estende `java.lang.Enum`); conjunto fechado de valores, sem herança.
@@ -108,7 +108,7 @@ _Erros de validação: exceções próprias (checked) com mensagens amigáveis a
 
 módulo `excecao`
 
-<img src="img/classes/ValidacaoException.png" alt="ValidacaoException" width="540">
+![ValidacaoException](img/classes/ValidacaoException.png)
 
 - **Descrição:** Superclasse comum de todos os erros de validação do domínio.
 - **Herança:** `extends Exception` → é uma exceção **checked** (Cap. 10): o compilador obriga `throws` ou `try/catch`.
@@ -120,7 +120,7 @@ módulo `excecao`
 
 módulo `excecao`
 
-<img src="img/classes/TituloVazioException.png" alt="TituloVazioException" width="540">
+![TituloVazioException](img/classes/TituloVazioException.png)
 
 - **Descrição:** Erro específico: o título do evento está vazio.
 - **Herança:** `extends ValidacaoException` (→ `Exception`).
@@ -132,7 +132,7 @@ módulo `excecao`
 
 módulo `excecao`
 
-<img src="img/classes/DataInvalidaException.png" alt="DataInvalidaException" width="540">
+![DataInvalidaException](img/classes/DataInvalidaException.png)
 
 - **Descrição:** Erro específico: a data do evento não foi informada/é inválida.
 - **Herança:** `extends ValidacaoException` (→ `Exception`).
@@ -144,7 +144,7 @@ módulo `excecao`
 
 módulo `excecao`
 
-<img src="img/classes/HoraInvalidaException.png" alt="HoraInvalidaException" width="540">
+![HoraInvalidaException](img/classes/HoraInvalidaException.png)
 
 - **Descrição:** Erro específico: a hora do evento não foi informada/é inválida.
 - **Herança:** `extends ValidacaoException` (→ `Exception`).
@@ -156,7 +156,7 @@ módulo `excecao`
 
 módulo `excecao`
 
-<img src="img/classes/EmailInvalidoException.png" alt="EmailInvalidoException" width="540">
+![EmailInvalidoException](img/classes/EmailInvalidoException.png)
 
 - **Descrição:** Erro específico: e-mail de participante sem `@`.
 - **Herança:** `extends ValidacaoException` (→ `Exception`).
@@ -175,7 +175,7 @@ _Controller de I/O: contrato e implementação para salvar/carregar os eventos e
 
 `«interface»` · módulo `persistencia`
 
-<img src="img/classes/RepositorioEventos.png" alt="RepositorioEventos" width="540">
+![RepositorioEventos](img/classes/RepositorioEventos.png)
 
 - **Descrição:** Contrato de quem sabe salvar e carregar eventos (define o papel, Cap. 8).
 - **Herança:** É uma **interface**: não herda — é **realizada** por classes concretas (ex.: `RepositorioEventosCSV`).
@@ -187,7 +187,7 @@ _Controller de I/O: contrato e implementação para salvar/carregar os eventos e
 
 módulo `persistencia`
 
-<img src="img/classes/RepositorioEventosCSV.png" alt="RepositorioEventosCSV" width="540">
+![RepositorioEventosCSV](img/classes/RepositorioEventosCSV.png)
 
 - **Descrição:** Implementação concreta que grava e lê os eventos num arquivo CSV (texto, 1 evento por linha).
 - **Herança:** Só `Object`; `implements RepositorioEventos` (realização de interface — triângulo tracejado no UML).
@@ -206,7 +206,7 @@ _Controller (regras): valida, busca, calcula lembretes e intermedeia a persistê
 
 módulo `servico`
 
-<img src="img/classes/GerenciadorEventos.png" alt="GerenciadorEventos" width="540">
+![GerenciadorEventos](img/classes/GerenciadorEventos.png)
 
 - **Descrição:** "Cérebro"/Controller: mantém a coleção em memória, valida, busca por texto/dia, calcula lembretes e delega a persistência.
 - **Herança:** Não estende outra classe (só `Object`). É a única classe com quem a GUI conversa.
@@ -225,7 +225,7 @@ _View (Swing): janelas e painéis que desenham a interface e tratam os eventos d
 
 módulo `gui`
 
-<img src="img/classes/JanelaPrincipal.png" alt="JanelaPrincipal" width="540">
+![JanelaPrincipal](img/classes/JanelaPrincipal.png)
 
 - **Descrição:** Janela principal: monta as três colunas (calendário, lista do dia e linha do tempo) e coordena a aplicação.
 - **Herança:** `extends JFrame` — é uma janela de topo (heavyweight, Cap. 13); herda `setVisible`, `pack`, `setJMenuBar`, `add`, etc.
@@ -237,7 +237,7 @@ módulo `gui`
 
 módulo `gui`
 
-<img src="img/classes/PainelCalendario.png" alt="PainelCalendario" width="540">
+![PainelCalendario](img/classes/PainelCalendario.png)
 
 - **Descrição:** Calendário mensal (grade Dom..Sab) com navegação de meses, botão Hoje e destaque dos dias com eventos.
 - **Herança:** `extends JPanel` (contêiner leve). Usa `GridLayout`/`BorderLayout` para montar a grade.
@@ -249,7 +249,7 @@ módulo `gui`
 
 `«interface aninhada»` · módulo `gui`
 
-<img src="img/classes/OuvinteDeDia.png" alt="OuvinteDeDia" width="540">
+![OuvinteDeDia](img/classes/OuvinteDeDia.png)
 
 - **Descrição:** Contrato "ouvinte de dia": ser avisado quando o usuário seleciona um dia no calendário.
 - **Herança:** Interface aninhada em `PainelCalendario`; não herda — é realizada por quem quiser reagir ao clique.
@@ -261,7 +261,7 @@ módulo `gui`
 
 módulo `gui`
 
-<img src="img/classes/PainelEventosDia.png" alt="PainelEventosDia" width="540">
+![PainelEventosDia](img/classes/PainelEventosDia.png)
 
 - **Descrição:** Lista de eventos do dia selecionado, com painel de detalhes/participantes e botões Novo/Editar/Excluir.
 - **Herança:** `extends JPanel`. Mostra a `JList` dentro de um `JScrollPane`.
@@ -273,7 +273,7 @@ módulo `gui`
 
 `«interface aninhada»` · módulo `gui`
 
-<img src="img/classes/Atualizavel.png" alt="Atualizavel" width="540">
+![Atualizavel](img/classes/Atualizavel.png)
 
 - **Descrição:** Contrato para avisar que os eventos mudaram, de modo que a janela atualize as colunas e salve.
 - **Herança:** Interface aninhada em `PainelEventosDia`; é realizada, não herdada.
@@ -285,7 +285,7 @@ módulo `gui`
 
 módulo `gui`
 
-<img src="img/classes/PainelAgenda.png" alt="PainelAgenda" width="540">
+![PainelAgenda](img/classes/PainelAgenda.png)
 
 - **Descrição:** Terceira coluna: a agenda em linha do tempo estilo Outlook, com alternância entre os modos Dia e Semana.
 - **Herança:** `extends JPanel`. Monta a barra de controle (Dia/Semana, navegação, Hoje) e a rolagem.
@@ -297,7 +297,7 @@ módulo `gui`
 
 módulo `gui`
 
-<img src="img/classes/PainelLinhaTempo.png" alt="PainelLinhaTempo" width="540">
+![PainelLinhaTempo](img/classes/PainelLinhaTempo.png)
 
 - **Descrição:** Tela de desenho dos cards de evento: posiciona cada um pela hora e divide eventos sobrepostos em subcolunas.
 - **Herança:** `extends JPanel` e `implements Scrollable` (interface do Swing) para rolar bem dentro do `JScrollPane`.
@@ -309,7 +309,7 @@ módulo `gui`
 
 módulo `gui`
 
-<img src="img/classes/IconeCategorias.png" alt="IconeCategorias" width="540">
+![IconeCategorias](img/classes/IconeCategorias.png)
 
 - **Descrição:** Ícone que pinta, lado a lado, as faixas de cor de todas as categorias presentes num dia do calendário.
 - **Herança:** Não estende outra classe (só `Object`); `implements javax.swing.Icon`.
@@ -321,7 +321,7 @@ módulo `gui`
 
 módulo `gui`
 
-<img src="img/classes/DialogoEvento.png" alt="DialogoEvento" width="540">
+![DialogoEvento](img/classes/DialogoEvento.png)
 
 - **Descrição:** Formulário (diálogo modal) para criar ou editar um evento: campos, categoria (radios), antecedência (combo) e participantes.
 - **Herança:** `extends JDialog` — é um diálogo modal (Cap. 10/13) que trava a janela principal até ser fechado.
@@ -333,7 +333,7 @@ módulo `gui`
 
 módulo `gui`
 
-<img src="img/classes/IntField.png" alt="IntField" width="540">
+![IntField](img/classes/IntField.png)
 
 - **Descrição:** Campo de texto especializado que só faz sentido com números inteiros (método `getInt()`).
 - **Herança:** `extends JTextField` — mesmo padrão do `ToggleButton` das aulas; o construtor chama `super(colunas)` (Cap. 8).
